@@ -6,18 +6,18 @@ import firebase from 'firebase/compat/app';
   providedIn: 'root',
 })
 export class AuthService {
-  constructor(private afAuth: AngularFireAuth) {}
+  constructor(private angularFireAuth: AngularFireAuth) {}
 
   signUp(email: string, password: string) {
-    return this.afAuth.createUserWithEmailAndPassword(email, password);
+    return this.angularFireAuth.createUserWithEmailAndPassword(email, password);
   }
 
   signIn(email: string, password: string) {
-    return this.afAuth.signInWithEmailAndPassword(email, password);
+    return this.angularFireAuth.signInWithEmailAndPassword(email, password);
   }
 
   signInWithGoogle() {
     const provider = new firebase.auth.GoogleAuthProvider();
-    return this.afAuth.signInWithPopup(provider);
+    return this.angularFireAuth.signInWithPopup(provider);
   }
 }

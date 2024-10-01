@@ -1,7 +1,7 @@
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 
-interface BlogPost {
+export interface BlogPost {
   id: string;
   title: string;
   content: string;

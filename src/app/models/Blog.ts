@@ -5,12 +5,20 @@ export interface BlogPost {
   title: string;
   content: string;
   authorId: string;
-  createdAt: firebase.firestore.Timestamp;
+  createdAt:
+    | firebase.firestore.Timestamp
+    | Date
+    | firebase.firestore.FieldValue
+    | null;
   comments: Comment[];
 }
 
-interface Comment {
+export interface Comment {
   userId: string;
   text: string;
-  createdAt: firebase.firestore.Timestamp;
+  createdAt:
+    | firebase.firestore.Timestamp
+    | Date
+    | firebase.firestore.FieldValue
+    | null;
 }

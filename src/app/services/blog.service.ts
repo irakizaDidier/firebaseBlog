@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { BlogPost } from '../models/Blog';
 import { map, Observable } from 'rxjs';
+import firebase from 'firebase/compat/app';
 
 @Injectable({
   providedIn: 'root',
@@ -9,8 +10,12 @@ import { map, Observable } from 'rxjs';
 export class BlogService {
   constructor(private firestore: AngularFirestore) {}
 
+  // Create a new blog post, using Firestore server timestamp
   createPost(post: BlogPost) {
-    return this.firestore.collection('posts').add(post);
+    return this.firestore.collection('posts').add({
+      ...post,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(), // Automatically set server timestamp
+    });
   }
 
   getPosts(): Observable<BlogPost[]> {
@@ -22,7 +27,14 @@ export class BlogService {
           actions.map((a) => {
             const data = a.payload.doc.data() as Omit<BlogPost, 'id'>;
             const id = a.payload.doc.id;
-            return { id, ...data };
+            let createdAt: Date | null = null;
+            if (data.createdAt instanceof firebase.firestore.Timestamp) {
+              createdAt = data.createdAt.toDate();
+            } else if (data.createdAt instanceof Date) {
+              createdAt = data.createdAt;
+            }
+
+            return { id, ...data, createdAt };
           })
         )
       );
@@ -37,6 +49,9 @@ export class BlogService {
   }
 
   addComment(postId: string, comment: Comment) {
-    return this.firestore.collection(`posts/${postId}/comments`).add(comment);
+    return this.firestore.collection(`posts/${postId}/comments`).add({
+      ...comment,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    });
   }
 }

@@ -1,17 +1,49 @@
-<div *ngIf="loading">Loading posts...</div>
-<div *ngIf="error">{{ error }}</div>
+<div *ngIf="loading" class="loading-message">
+  <div class="loading-wave">
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
 
-<div *ngIf="blogPosts$ | async as blogPosts; else noPosts">
-  <h2>Blog Posts</h2>
-  <ul>
-    <li *ngFor="let post of blogPosts">
-      <h3>{{ post.title }}</h3>
-      <p>{{ post.content }}</p>
-      <button (click)="deletePost(post.id)">Delete</button>
+<div *ngIf="blogPosts$ | async as blogPosts; else noPosts"
+  class="blog-container">
+  <h2 class="blog-title">Blog Posts</h2>
+
+  <!-- Add New Blog Button -->
+  <div class="add-new-post">
+    <button class="add-button" (click)="addNewPost()">Add New Blog</button>
+  </div>
+
+  <ul class="blog-list">
+    <li *ngFor="let post of blogPosts" class="blog-item">
+      <h3 class="blog-post-title">{{ post.title }}</h3>
+      <p class="blog-post-content">{{ post.content }}</p>
+      <p class="blog-post-date">Posted on: {{ getFormattedDate(post.createdAt) |
+        date: 'short' }}</p>
+
+      <h4 class="comment-title">Comments:</h4>
+      <ul class="comment-list">
+        <li *ngFor="let comment of post.comments" class="comment-item">
+          <p class="comment-text">{{ comment }}</p>
+        </li>
+      </ul>
+
+      <div *ngIf="!post.comments?.length" class="no-comments-message">No
+        comments yet.</div>
+
+      <div class="blog-buttons">
+        <button class="edit-button" (click)="editPost(post.id)">Edit</button>
+        <button class="delete-button"
+          (click)="deletePost(post.id)">Delete</button>
+      </div>
     </li>
   </ul>
 </div>
 
 <ng-template #noPosts>
-  <p>No blog posts available.</p>
+  <p class="no-posts-message">No blog posts available.</p>
 </ng-template>

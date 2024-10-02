@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { BlogService } from '../../services/blog.service';
-import { Observable, catchError, of } from 'rxjs';
+import { Observable, catchError, map, of } from 'rxjs';
 import { BlogPost } from '../../models/Blog';
+import firebase from 'firebase/compat/app';
 
 @Component({
   selector: 'app-blog',
@@ -17,9 +18,14 @@ export class BlogComponent implements OnInit {
 
   ngOnInit(): void {
     this.blogPosts$ = this.blogService.getPosts().pipe(
+      map((posts: BlogPost[]) =>
+        posts.map((post) => ({
+          ...post,
+          comments: post.comments ?? [],
+        }))
+      ),
       catchError((err) => {
         this.error = 'Error loading posts. Please try again later.';
-        console.error(err);
         return of([]);
       })
     );
@@ -38,8 +44,27 @@ export class BlogComponent implements OnInit {
         })
         .catch((err) => {
           this.error = 'Error deleting post. Please try again later.';
-          console.error(err);
         });
     }
   }
+
+  getFormattedDate(
+    timestamp:
+      | firebase.firestore.Timestamp
+      | Date
+      | firebase.firestore.FieldValue
+      | null
+      | undefined
+  ): Date | null {
+    if (timestamp instanceof firebase.firestore.Timestamp) {
+      return timestamp.toDate();
+    } else if (timestamp instanceof Date) {
+      return timestamp;
+    }
+    return null;
+  }
+
+  addNewPost(): void {}
+
+  editPost(id: string): void {}
 }

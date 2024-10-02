@@ -1,0 +1,16 @@
+<div *ngIf="showModal" class="modal-overlay">
+  <div class="modal-content">
+    <h2 class="modal-title">Edit Blog Post</h2>
+
+    <label for="title">Title:</label>
+    <input id="title" [(ngModel)]="updatedPost.title" type="text" />
+
+    <label for="content">Content:</label>
+    <textarea id="content" [(ngModel)]="updatedPost.content"></textarea>
+
+    <div class="modal-buttons">
+      <button class="cancel-button" (click)="onCancel()">Cancel</button>
+      <button class="save-button" (click)="onSave()">Save</button>
+    </div>
+  </div>
+</div>

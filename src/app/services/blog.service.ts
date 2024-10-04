@@ -10,11 +10,10 @@ import firebase from 'firebase/compat/app';
 export class BlogService {
   constructor(private firestore: AngularFirestore) {}
 
-  // Create a new blog post, using Firestore server timestamp
   createPost(post: BlogPost) {
     return this.firestore.collection('posts').add({
       ...post,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(), // Automatically set server timestamp
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
     });
   }
 

@@ -1,6 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { BlogService } from '../../services/blog.service';
 import { AuthService } from '../../services/auth.service';
+import { SeoService } from '../../services/seo.service'; // Import SeoService
 import { BlogPost } from '../../models/Blog';
 import firebase from 'firebase/compat/app';
 import { catchError, map } from 'rxjs';
@@ -27,6 +28,7 @@ export class BlogComponent implements OnInit {
   constructor(
     private blogService: BlogService,
     private authService: AuthService,
+    private seoService: SeoService, // Inject SeoService
     private router: Router
   ) {}
 
@@ -53,6 +55,11 @@ export class BlogComponent implements OnInit {
       .subscribe((posts) => {
         this.blogPosts.set(posts);
         this.loading.set(false);
+        // Set the SEO meta tags after loading posts
+        this.seoService.updateMetaTags(
+          'Blog Posts',
+          'Browse the latest blog posts'
+        );
       });
   }
 
@@ -101,6 +108,11 @@ export class BlogComponent implements OnInit {
     if (postToEdit) {
       this.postToEdit.set(postToEdit);
       this.showEditModal.set(true);
+      // Update SEO when editing a post
+      this.seoService.updateMetaTags(
+        `Edit ${postToEdit.title}`,
+        `Editing the post titled ${postToEdit.title}`
+      );
     }
   }
 
@@ -113,6 +125,11 @@ export class BlogComponent implements OnInit {
           post.id === updatedPost.id ? updatedPost : post
         );
         this.blogPosts.set(posts);
+        // Update SEO after saving the post
+        this.seoService.updateMetaTags(
+          updatedPost.title,
+          updatedPost.content.substring(0, 150)
+        );
       })
       .catch((err) => {
         this.error.set('Error updating post. Please try again later.');
@@ -125,6 +142,8 @@ export class BlogComponent implements OnInit {
 
   openAddPostModal(): void {
     this.showAddPostModal.set(true);
+    // Set SEO when opening add post modal
+    this.seoService.updateMetaTags('Create New Post', 'Write a new blog post');
   }
 
   cancelAddPost(): void {
@@ -149,6 +168,11 @@ export class BlogComponent implements OnInit {
       .then(() => {
         this.showAddPostModal.set(false);
         this.blogPosts.set([...this.blogPosts(), newPost]);
+        // Set SEO after creating a new post
+        this.seoService.updateMetaTags(
+          newPost.title,
+          newPost.content.substring(0, 150)
+        );
       })
       .catch((err) => {
         this.error.set('Error creating new post. Please try again later.');

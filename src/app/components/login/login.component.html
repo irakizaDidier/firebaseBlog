@@ -1,0 +1,26 @@
+<div class="login-container">
+  <div class="login-box">
+    <h1 class="login-title">Login</h1>
+
+    <input
+      type="email"
+      class="input-field"
+      placeholder="Email"
+      [(ngModel)]="email" />
+    <input
+      type="password"
+      class="input-field"
+      placeholder="Password"
+      [(ngModel)]="password" />
+
+    <button class="login-button" (click)="login()">Login</button>
+    <button class="google-login-button" (click)="loginWithGoogle()">
+      Sign in with Google
+    </button>
+
+    <p class="login-footer my-6 text-center">
+      Don't have an account? <a routerLink="/signup"
+        class="underline text-blue-400">Sign up</a>
+    </p>
+  </div>
+</div>

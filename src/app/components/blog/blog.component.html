@@ -1,3 +1,10 @@
+<div class="auth-container">
+  <div *ngIf="currentUser(); " class="user-profile">
+    <p>Welcome, {{ currentUser()?.email }}</p>
+    <button class="sign-out-button" (click)="signOut()">Sign Out</button>
+  </div>
+</div>
+
 <div *ngIf="loading()" class="loading-message">
   <div class="loading-wave">
     <span></span>
@@ -12,8 +19,9 @@
 <div *ngIf="blogPosts().length > 0; else noPosts" class="blog-container">
   <h2 class="blog-title">Blog Posts</h2>
 
-  <div class="add-new-post">
-    <button class="add-button" (click)="addNewPost()">Add New Blog</button>
+  <div class="add-new-post" *ngIf="currentUser()">
+    <button class="add-button" (click)="openAddPostModal()">Add New
+      Blog</button>
   </div>
 
   <ul class="blog-list">
@@ -33,7 +41,7 @@
       <div *ngIf="!post.comments?.length" class="no-comments-message">No
         comments yet.</div>
 
-      <div class="blog-buttons">
+      <div class="blog-buttons" *ngIf="currentUser()?.uid === post.authorId">
         <button class="edit-button" (click)="editPost(post.id)">Edit</button>
         <button class="delete-button"
           (click)="confirmDeletePost(post.id)">Delete</button>
@@ -57,3 +65,8 @@
   [post]="postToEdit()"
   (save)="savePost($event)"
   (cancel)="cancelEdit()"></app-edit-modal>
+
+<app-add-post-modal
+  [showModal]="showAddPostModal()"
+  (save)="createNewPost($event)"
+  (cancelAction)="cancelAddPost()"></app-add-post-modal>

@@ -1,8 +1,10 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { BlogService } from '../../services/blog.service';
+import { AuthService } from '../../services/auth.service';
 import { BlogPost } from '../../models/Blog';
 import firebase from 'firebase/compat/app';
 import { catchError, map } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-blog',
@@ -13,6 +15,7 @@ export class BlogComponent implements OnInit {
   blogPosts = signal<BlogPost[]>([]);
   loading = signal<boolean>(true);
   error = signal<string | undefined>(undefined);
+  currentUser = signal<firebase.User | null>(null);
 
   showDeleteModal = signal<boolean>(false);
   postToDeleteId = signal<string | null>(null);
@@ -21,9 +24,17 @@ export class BlogComponent implements OnInit {
   postToEdit = signal<BlogPost | null>(null);
   showAddPostModal = signal<boolean>(false);
 
-  constructor(private blogService: BlogService) {}
+  constructor(
+    private blogService: BlogService,
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
+    this.authService.getCurrentUser().subscribe((user) => {
+      this.currentUser.set(user);
+    });
+
     this.blogService
       .getPosts()
       .pipe(
@@ -85,8 +96,6 @@ export class BlogComponent implements OnInit {
     return null;
   }
 
-  addNewPost(): void {}
-
   editPost(id: string): void {
     const postToEdit = this.blogPosts().find((post) => post.id === id);
     if (postToEdit) {
@@ -123,8 +132,8 @@ export class BlogComponent implements OnInit {
   }
 
   createNewPost(postData: { title: string; content: string }): void {
-    const postId = this.generatePostId(); 
-    const currentUserId = this.generateCurrentUserId();
+    const postId = this.generatePostId();
+    const currentUserId = this.currentUser()?.uid ?? 'anonymous';
 
     const newPost: BlogPost = {
       id: postId,
@@ -146,15 +155,28 @@ export class BlogComponent implements OnInit {
       });
   }
 
+  generatePostId(): string {
+    const timestamp = Date.now().toString(36);
+    const randomPart = Math.random().toString(36).substring(2, 9);
+    return `post-${timestamp}-${randomPart}`;
+  }
+
   generateCurrentUserId(): string {
     const timestamp = Date.now().toString(36);
     const randomPart = Math.random().toString(36).substring(2, 8);
     return `user-${timestamp}-${randomPart}`;
   }
 
-  generatePostId(): string {
-    const timestamp = Date.now().toString(36);
-    const randomPart = Math.random().toString(36).substring(2, 9);
-    return `post-${timestamp}-${randomPart}`;
+  signInWithGoogle(): void {
+    this.authService.signInWithGoogle().catch((error) => {
+      this.error.set('Error signing in with Google. Please try again.');
+    });
+  }
+
+  signOut(): void {
+    this.authService.signOut().catch((error) => {
+      this.error.set('Error signing out. Please try again.');
+    });
+    this.router.navigate(['/login']);
   }
 }

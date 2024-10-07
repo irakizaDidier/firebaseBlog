@@ -20,4 +20,22 @@ export class AuthService {
     const provider = new firebase.auth.GoogleAuthProvider();
     return this.angularFireAuth.signInWithPopup(provider);
   }
+
+  signOut() {
+    return this.angularFireAuth.signOut();
+  }
+
+  resetPassword(email: string) {
+    return this.angularFireAuth.sendPasswordResetEmail(email);
+  }
+
+  sendEmailVerification() {
+    return this.angularFireAuth.currentUser.then((user) => {
+      return user?.sendEmailVerification();
+    });
+  }
+
+  getCurrentUser() {
+    return this.angularFireAuth.authState;
+  }
 }

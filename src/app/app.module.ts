@@ -12,6 +12,8 @@ import { environment } from './environments/environment';
 import { DeleteComponent } from './components/delete/delete.component';
 import { EditModalComponent } from './components/edit-modal/edit-modal.component';
 import { AddPostModalComponent } from './components/add-post-modal/add-post-modal.component';
+import { SignupComponent } from './components/signup/signup.component';
+import { LoginComponent } from './components/login/login.component';
 
 @NgModule({
   declarations: [
@@ -20,6 +22,8 @@ import { AddPostModalComponent } from './components/add-post-modal/add-post-moda
     DeleteComponent,
     EditModalComponent,
     AddPostModalComponent,
+    SignupComponent,
+    LoginComponent,
   ],
   imports: [
     BrowserModule,

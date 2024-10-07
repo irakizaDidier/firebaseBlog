@@ -11,6 +11,7 @@ import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { environment } from './environments/environment';
 import { DeleteComponent } from './components/delete/delete.component';
 import { EditModalComponent } from './components/edit-modal/edit-modal.component';
+import { AddPostModalComponent } from './components/add-post-modal/add-post-modal.component';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { EditModalComponent } from './components/edit-modal/edit-modal.component
     BlogComponent,
     DeleteComponent,
     EditModalComponent,
+    AddPostModalComponent,
   ],
   imports: [
     BrowserModule,

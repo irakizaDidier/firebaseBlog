@@ -13,7 +13,8 @@
   <h2 class="blog-title">Blog Posts</h2>
 
   <div class="add-new-post">
-    <button class="add-button" (click)="addNewPost()">Add New Blog</button>
+    <button class="add-button" (click)="openAddPostModal()">Add New
+      Blog</button>
   </div>
 
   <ul class="blog-list">
@@ -57,3 +58,9 @@
   [post]="postToEdit()"
   (save)="savePost($event)"
   (cancel)="cancelEdit()"></app-edit-modal>
+
+<app-add-post-modal
+  [showModal]="showAddPostModal()"
+  (save)="createNewPost($event)"
+  (cancelAction)="cancelAddPost()">
+</app-add-post-modal>

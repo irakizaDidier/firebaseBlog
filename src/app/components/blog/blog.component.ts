@@ -19,6 +19,7 @@ export class BlogComponent implements OnInit {
 
   showEditModal = signal<boolean>(false);
   postToEdit = signal<BlogPost | null>(null);
+  showAddPostModal = signal<boolean>(false);
 
   constructor(private blogService: BlogService) {}
 
@@ -84,8 +85,7 @@ export class BlogComponent implements OnInit {
     return null;
   }
 
-  addNewPost(): void {
-  }
+  addNewPost(): void {}
 
   editPost(id: string): void {
     const postToEdit = this.blogPosts().find((post) => post.id === id);
@@ -112,5 +112,49 @@ export class BlogComponent implements OnInit {
 
   cancelEdit(): void {
     this.showEditModal.set(false);
+  }
+
+  openAddPostModal(): void {
+    this.showAddPostModal.set(true);
+  }
+
+  cancelAddPost(): void {
+    this.showAddPostModal.set(false);
+  }
+
+  createNewPost(postData: { title: string; content: string }): void {
+    const postId = this.generatePostId(); 
+    const currentUserId = this.generateCurrentUserId();
+
+    const newPost: BlogPost = {
+      id: postId,
+      title: postData.title,
+      content: postData.content,
+      authorId: currentUserId,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      comments: [],
+    };
+
+    this.blogService
+      .createPost(newPost)
+      .then(() => {
+        this.showAddPostModal.set(false);
+        this.blogPosts.set([...this.blogPosts(), newPost]);
+      })
+      .catch((err) => {
+        this.error.set('Error creating new post. Please try again later.');
+      });
+  }
+
+  generateCurrentUserId(): string {
+    const timestamp = Date.now().toString(36);
+    const randomPart = Math.random().toString(36).substring(2, 8);
+    return `user-${timestamp}-${randomPart}`;
+  }
+
+  generatePostId(): string {
+    const timestamp = Date.now().toString(36);
+    const randomPart = Math.random().toString(36).substring(2, 9);
+    return `post-${timestamp}-${randomPart}`;
   }
 }
